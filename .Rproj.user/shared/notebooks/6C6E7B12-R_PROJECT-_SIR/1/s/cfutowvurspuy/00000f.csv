@@ -1,0 +1,2 @@
+"0","# Calculate residuals using the filtered training data"
+"0","residuals_filtered <- residuals(outliers_filtered_linear_model)"

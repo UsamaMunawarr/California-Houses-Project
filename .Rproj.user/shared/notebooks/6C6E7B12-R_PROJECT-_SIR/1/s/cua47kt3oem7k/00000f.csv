@@ -1,0 +1,3 @@
+"0","# Filter out correlations with the dependent variable"
+"0","cor_data_filtered <- cor_data %>%"
+"0","  filter(Var1 != ""median_house_value"")"

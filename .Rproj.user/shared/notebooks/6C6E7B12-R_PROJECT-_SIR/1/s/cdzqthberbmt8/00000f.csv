@@ -1,0 +1,4 @@
+"0","label_dict <- setNames(1:length(unique_values), unique_values)"
+"0","data_encoded <- data %>%"
+"0","mutate(ocean_proximity_encoded = label_dict[ocean_proximity])"
+"0","data1 <- data_encoded"

@@ -1,0 +1,2 @@
+"0","# Graphical Test: Residuals vs. Fitted plot"
+"0","plot(linear_model$fitted.values, linear_model$residuals, main = ""Residuals vs. Fitted"", xlab = ""Fitted Values"", ylab = ""Residuals"",col=""orange"")"

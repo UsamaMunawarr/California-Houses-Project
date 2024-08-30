@@ -1,0 +1,6 @@
+"0","# Load necessary library"
+"0","# install.packages(""car"")"
+"0","library(car)"
+"0",""
+"0","# Component + residual plots"
+"0","#crPlots(linear_model)"

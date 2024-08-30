@@ -1,0 +1,2 @@
+"0","# Create a data frame with residuals and corresponding predictor variable"
+"0","residuals_data_filtered <- data.frame(Residuals = residuals_filtered, Ocean_Proximity = outliers_filtered$ocean_proximity)"

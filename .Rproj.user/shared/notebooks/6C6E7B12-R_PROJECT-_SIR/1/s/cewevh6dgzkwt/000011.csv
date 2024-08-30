@@ -1,0 +1,4 @@
+"0","# Density plot for 'median_income'"
+"0","ggplot(data, aes(x = median_income, fill = ocean_proximity)) +"
+"0","  geom_density(alpha = 0.5) +"
+"0","  labs(title = ""Density Plot of Median Income by Ocean Proximity"")"

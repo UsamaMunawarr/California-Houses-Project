@@ -1,0 +1,5 @@
+"0","# Create a facet grid of scatter plots"
+"0","ggplot(data, aes(x = median_income, y = median_house_value)) +"
+"0","  geom_point(alpha = 0.3, color = ""darkgreen"") +"
+"0","  facet_grid(. ~ ocean_proximity) +"
+"0","  labs(title = ""Median Income vs. House Value by Ocean Proximity"")"

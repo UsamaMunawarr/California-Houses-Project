@@ -1,0 +1,7 @@
+"0","# Visualize correlations using a bar plot"
+"0","library(ggplot2)"
+"0","ggplot(data = cor_data_filtered, aes(x = reorder(Var1, -Freq), y = Freq)) +"
+"0","  geom_bar(stat = ""identity"", fill = ""blue"", color = ""black"") +"
+"0","  coord_flip() +"
+"0","  labs(title = ""Correlations with Median House Value"")"
+"0",""

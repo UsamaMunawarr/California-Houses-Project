@@ -1,0 +1,4 @@
+"0","# cat(""Number of Rows Of Traning Data:"",nrow(train_data),'\n')"
+"0","# cat(""Number of Rows Of Testing Data:"",nrow(test_data),'\n')"
+"0","# cat(""Sum of Both:"",sum(14447+6193),'\n')"
+"0","# cat('Total values of Original Data:',nrow(data),'\n')"

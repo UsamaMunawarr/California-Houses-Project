@@ -1,0 +1,8 @@
+"0","# Scatter plot with linear regression line"
+"0","ggplot(data, aes(x = median_income, y = median_house_value)) +"
+"0","  geom_point(alpha = 0.3, color = ""darkgreen"") +"
+"0","  geom_smooth(method = ""lm"", se = FALSE, color = ""purple"") +"
+"0","  labs(title = ""Median Income vs. House Value with Linear Regression Line"","
+"0","       x = ""Median Income"", y = ""Median House Value"")"
+"1","[38;5;255m`geom_smooth()` using formula = 'y ~ x'[39m
+"

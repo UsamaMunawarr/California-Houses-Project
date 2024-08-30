@@ -1,0 +1,31 @@
+"0","library(lmtest)"
+"2","Loading required package: zoo
+"
+"2","
+Attaching package: ‘zoo’
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    as.Date, as.Date.numeric
+
+"
+"0","bptest(linear_model)"
+"1","
+"
+"1","	studentized Breusch-Pagan test"
+"1","
+"
+"1","
+"
+"1","data:  "
+"1",""
+"1","linear_model"
+"1",""
+"1","
+"
+"1","BP = 782.17, df = 12, p-value < 2.2e-16"
+"1","
+"
+"1","
+"

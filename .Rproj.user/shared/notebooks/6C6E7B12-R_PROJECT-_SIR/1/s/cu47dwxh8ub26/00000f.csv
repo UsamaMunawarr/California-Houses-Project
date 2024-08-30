@@ -1,0 +1,27 @@
+"0","# Train Random Forest model"
+"0","#install.packages(""randomForest"")"
+"0","library(randomForest)"
+"2","randomForest 4.7-1.1
+"
+"2","Type rfNews() to see new features/changes/bug fixes.
+"
+"2","
+Attaching package: ‘randomForest’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    combine
+
+"
+"2","The following object is masked from ‘package:gridExtra’:
+
+    combine
+
+"
+"2","The following object is masked from ‘package:ggplot2’:
+
+    margin
+
+"
+"0","random_forest_model <- randomForest(median_house_value ~ ., data = data, ntree = 500)"

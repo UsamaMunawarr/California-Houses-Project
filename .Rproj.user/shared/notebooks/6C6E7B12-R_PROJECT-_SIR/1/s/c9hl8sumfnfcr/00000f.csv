@@ -1,0 +1,7 @@
+"0","# evaluate_model <- function(actual, predicted) {"
+"0","#   mae <- mean(abs(actual - predicted))"
+"0","#   mse <- mean((actual - predicted)^2)"
+"0","#   rmse <- sqrt(mse)"
+"0","#   r2 <- 1 - sum((actual - predicted)^2) / sum((actual - mean(actual))^2)"
+"0","#   return(list(MAE = mae, MSE = mse, RMSE = rmse, R2 = r2))"
+"0","# }"

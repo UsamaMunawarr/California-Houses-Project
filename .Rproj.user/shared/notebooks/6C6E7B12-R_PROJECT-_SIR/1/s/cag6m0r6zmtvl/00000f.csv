@@ -1,0 +1,3 @@
+"0","# test_evaluation <- evaluate_model(test_data$median_house_value, test_predictions)"
+"0","# print(""Test Data Evaluation:"")"
+"0","# print(test_evaluation)"

@@ -1,0 +1,4 @@
+"0","# Violin plot for 'ocean_proximity' vs. 'median_house_value'"
+"0","ggplot(data, aes(x = as.factor(ocean_proximity), y = median_house_value)) +"
+"0","  geom_violin(fill = ""pink"") +"
+"0","  labs(title = ""Violin Plot of House Value by Ocean Proximity"")"

@@ -1,0 +1,4 @@
+"0","# set.seed(123)"
+"0","# train_index <- sample(seq_len(nrow(data)), size = 0.7*nrow(data))"
+"0","# train_data <- data[train_index, ]"
+"0","# test_data <- data[-train_index, ]"

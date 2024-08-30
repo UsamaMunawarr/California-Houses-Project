@@ -1,0 +1,4 @@
+"0","# library(writexl)"
+"0","# Assuming your dataset is in a variable called `housing`"
+"0","#write_csv(train_data, ""train_data.csv"")"
+"0",""

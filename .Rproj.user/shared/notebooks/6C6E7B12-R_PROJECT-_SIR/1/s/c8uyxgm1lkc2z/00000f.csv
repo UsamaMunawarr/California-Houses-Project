@@ -1,0 +1,2 @@
+"0","# # Train the linear regression model by using step wise approach"
+"0","# linear_model <- lm(median_house_value ~ ., data = train_data)"

@@ -1,0 +1,27 @@
+"0","# Plot the boxplot of residuals after removing outliers"
+"0","library(ggplot2)"
+"0","p<- ggplot(residuals_data_filtered, aes(y = Residuals, fill = Ocean_Proximity)) +"
+"0","  geom_boxplot() +"
+"0","  labs(title = ""Boxplot of Residuals After Removing Outliers"", y = ""Residuals"", fill = ""Ocean Proximity"") +"
+"0","  theme_minimal()"
+"0","library(plotly)"
+"2","
+Attaching package: ‘plotly’
+
+"
+"2","The following object is masked from ‘package:ggplot2’:
+
+    last_plot
+
+"
+"2","The following object is masked from ‘package:stats’:
+
+    filter
+
+"
+"2","The following object is masked from ‘package:graphics’:
+
+    layout
+
+"
+"0","ggplotly(p)"

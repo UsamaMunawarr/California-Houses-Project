@@ -1,0 +1,18 @@
+"0","# Print the column names, one per line"
+"0","cat(""The Column Names in Dataset are Given Below:\n"")"
+"1","The Column Names in Dataset are Given Below:
+"
+"0","cat(paste(colnames(data), collapse = ""\n""), ""\n"")"
+"1","longitude
+latitude
+housing_median_age
+total_rooms
+total_bedrooms
+population
+households
+median_income
+median_house_value
+ocean_proximity"
+"1"," "
+"1","
+"

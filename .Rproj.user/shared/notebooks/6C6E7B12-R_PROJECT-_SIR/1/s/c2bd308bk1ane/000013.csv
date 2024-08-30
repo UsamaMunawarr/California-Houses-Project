@@ -1,0 +1,6 @@
+"0","# Specify a dark shade color"
+"0","dark_shade_color <- ""darkgray"""
+"0",""
+"0","# Create the correlation plot with a dark shade"
+"0","corrplot(m, method = ""shade"", order = ""alphabet"", shade.col = dark_shade_color)"
+"0",""

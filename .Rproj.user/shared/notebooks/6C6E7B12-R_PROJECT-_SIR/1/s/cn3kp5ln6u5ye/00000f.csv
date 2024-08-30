@@ -1,0 +1,6 @@
+"0","# Calculate correlations between variables and median_house_value"
+"0","#library(corrplot)"
+"0","numeric_df <- data %>%"
+"0","  select_if(is.numeric)"
+"0","correlations<-cor(numeric_df,method=""pearson"")"
+"0",""

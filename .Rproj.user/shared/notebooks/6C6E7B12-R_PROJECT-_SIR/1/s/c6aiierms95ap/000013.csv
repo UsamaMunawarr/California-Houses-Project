@@ -1,0 +1,4 @@
+"0","# summarize with dplyr packages"
+"0","data %>% "
+"0","  group_by(ocean_proximity) %>%"
+"0","  summarise(mean(median_house_value), sd(median_house_value), min(median_house_value), max(median_house_value))"

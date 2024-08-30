@@ -1,0 +1,47 @@
+"0","# Load the necessary libraries"
+"0","library(ggplot2)"
+"2","Need help getting started? Try the R Graphics Cookbook:
+https://r-graphics.org
+"
+"0","# install.packages(""gridExtra"")"
+"0","library(gridExtra)"
+"0",""
+"0","# Assuming your residuals are stored in a variable called residuals"
+"0","residuals <- linear_model$residuals"
+"0",""
+"0","# Create a data frame from the residuals"
+"0","df <- data.frame(Residuals = residuals)"
+"0",""
+"0","# Histogram with a bell curve"
+"0","hist_plot <- ggplot(df, aes(x = Residuals)) +"
+"0","  geom_histogram(aes(y = ..density..), bins = 30, fill = ""grey"", color = ""black"") +"
+"0","  stat_function(fun = dnorm, args = list(mean = mean(df$Residuals), sd = sd(df$Residuals)), "
+"0","                color = ""black"", size = 1) +"
+"0","  ggtitle(""Histogram of Residuals"") +"
+"0","  xlab(""Residuals"") +"
+"0","  ylab(""Density"")"
+"2","Warning:"
+"2"," [38;5;255mUsing `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+[36mℹ[38;5;255m Please use `linewidth` instead.
+[90mThis warning is displayed once every 8 hours.[38;5;255m
+[90mCall `lifecycle::last_lifecycle_warnings()` to see where this[38;5;255m
+[90mwarning was generated.[38;5;255m[39m
+"
+"0","# Q-Q plot"
+"0","qq_plot <- ggplot(df, aes(sample = Residuals)) +"
+"0","  stat_qq() +"
+"0","  stat_qq_line() +"
+"0","  ggtitle(""Q-Q Plot of Residuals"") +"
+"0","  xlab(""Theoretical Quantiles"") +"
+"0","  ylab(""Sample Quantiles"")"
+"0",""
+"0","# Combine plots"
+"0","grid.arrange(hist_plot, qq_plot, nrow = 1)"
+"2","Warning:"
+"2"," [38;5;255mThe dot-dot notation (`..density..`) was deprecated in ggplot2
+3.4.0.
+[36mℹ[38;5;255m Please use `after_stat(density)` instead.
+[90mThis warning is displayed once every 8 hours.[38;5;255m
+[90mCall `lifecycle::last_lifecycle_warnings()` to see where this[38;5;255m
+[90mwarning was generated.[38;5;255m[39m
+"

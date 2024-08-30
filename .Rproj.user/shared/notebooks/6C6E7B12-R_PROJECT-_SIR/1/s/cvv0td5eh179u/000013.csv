@@ -1,0 +1,4 @@
+"0","# Bar plot for 'ocean_proximity_encoded'"
+"0","ggplot(data, aes(x = (ocean_proximity))) +"
+"0","  geom_bar(fill = ""orange"") +"
+"0","  labs(title = ""Distribution of Ocean Proximity"", x = ""Ocean Proximity"", y = ""Count"")"

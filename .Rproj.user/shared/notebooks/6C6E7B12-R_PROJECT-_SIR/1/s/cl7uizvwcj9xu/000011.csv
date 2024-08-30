@@ -1,0 +1,315 @@
+"0","linear_model <- lm(median_house_value ~ ., data = data)"
+"0","# Apply Yeo-Johnson transformation to the residuals"
+"0","install.packages(""bestNormalize"")"
+"2","WARNING: Rtools is required to build R packages but is not currently installed. Please download and install the appropriate version of Rtools before proceeding:
+
+https://cran.rstudio.com/bin/windows/Rtools/
+"
+"2","Installing package into ‘C:/Users/usama/AppData/Local/R/win-library/4.4’
+(as ‘lib’ is unspecified)
+"
+"2","also installing the dependencies ‘listenv’, ‘parallelly’, ‘future’, ‘globals’, ‘shape’, ‘future.apply’, ‘progressr’, ‘SQUAREM’, ‘diagram’, ‘lava’, ‘RcppParallel’, ‘prodlim’, ‘lamW’, ‘rngtools’, ‘clock’, ‘gower’, ‘hardhat’, ‘ipred’, ‘timeDate’, ‘lobstr’, ‘LambertW’, ‘doParallel’, ‘doRNG’, ‘recipes’, ‘butcher’
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/listenv_0.9.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 109426 bytes (106 KB)
+"
+"2","downloaded 106 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/parallelly_1.38.0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 383177 bytes (374 KB)
+"
+"2","downloaded 374 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/future_1.34.0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 690750 bytes (674 KB)
+"
+"2","downloaded 674 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/globals_0.16.3.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 109926 bytes (107 KB)
+"
+"2","downloaded 107 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/shape_1.4.6.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 753988 bytes (736 KB)
+"
+"2","downloaded 736 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/future.apply_1.11.2.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 160248 bytes (156 KB)
+"
+"2","downloaded 156 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/progressr_0.14.0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 392213 bytes (383 KB)
+"
+"2","downloaded 383 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/SQUAREM_2021.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 183502 bytes (179 KB)
+"
+"2","downloaded 179 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/diagram_1.6.5.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 688009 bytes (671 KB)
+"
+"2","downloaded 671 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/lava_1.8.0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 2506926 bytes (2.4 MB)
+"
+"2","downloaded 2.4 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/RcppParallel_5.1.9.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1295426 bytes (1.2 MB)
+"
+"2","downloaded 1.2 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/prodlim_2024.06.25.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 423525 bytes (413 KB)
+"
+"2","downloaded 413 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/lamW_2.2.4.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 378160 bytes (369 KB)
+"
+"2","downloaded 369 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/rngtools_1.5.2.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 80370 bytes (78 KB)
+"
+"2","downloaded 78 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/clock_0.7.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 2207565 bytes (2.1 MB)
+"
+"2","downloaded 2.1 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/gower_1.0.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 325167 bytes (317 KB)
+"
+"2","downloaded 317 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/hardhat_1.4.0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 847789 bytes (827 KB)
+"
+"2","downloaded 827 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/ipred_0.9-15.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 391760 bytes (382 KB)
+"
+"2","downloaded 382 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/timeDate_4032.109.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1404820 bytes (1.3 MB)
+"
+"2","downloaded 1.3 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/lobstr_1.1.2.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 463849 bytes (452 KB)
+"
+"2","downloaded 452 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/LambertW_0.6.9-1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1036440 bytes (1012 KB)
+"
+"2","downloaded 1012 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/doParallel_1.0.17.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 192225 bytes (187 KB)
+"
+"2","downloaded 187 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/doRNG_1.8.6.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 306949 bytes (299 KB)
+"
+"2","downloaded 299 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/recipes_1.1.0.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1667550 bytes (1.6 MB)
+"
+"2","downloaded 1.6 MB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/butcher_0.3.4.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 287628 bytes (280 KB)
+"
+"2","downloaded 280 KB
+
+"
+"2","trying URL 'https://cran.rstudio.com/bin/windows/contrib/4.4/bestNormalize_1.9.1.zip'
+"
+"2","Content type 'application/zip'"
+"2"," length 1074152 bytes (1.0 MB)
+"
+"2","downloaded 1.0 MB
+
+"
+"1","package ‘listenv’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘parallelly’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘future’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘globals’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘shape’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘future.apply’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘progressr’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘SQUAREM’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘diagram’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘lava’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘RcppParallel’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘prodlim’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘lamW’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘rngtools’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘clock’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘gower’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘hardhat’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘ipred’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘timeDate’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘lobstr’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘LambertW’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘doParallel’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘doRNG’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘recipes’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘butcher’ successfully unpacked and MD5 sums checked
+"
+"1","package ‘bestNormalize’ successfully unpacked and MD5 sums checked
+"
+"1","
+"
+"1",""
+"1","The downloaded binary packages are in
+	C:\Users\usama\AppData\Local\Temp\Rtmp0iElKS\downloaded_packages"
+"1",""
+"1","
+"
+"0","library(bestNormalize)"
+"0","yeo_johnson_result <- yeojohnson(residuals)"
+"0","yeo_johnson_transformed_residuals <- yeo_johnson_result$x.t"
+"0",""
+"0","# Check normality of the Yeo-Johnson transformed residuals using Anderson-Darling test"
+"0","ad_test_yeo_johnson_transformed <- ad.test(yeo_johnson_transformed_residuals)"
+"0","print(ad_test_yeo_johnson_transformed)"
+"1","
+"
+"1","	Anderson-Darling normality test"
+"1","
+"
+"1","
+"
+"1","data:  "
+"1",""
+"1","yeo_johnson_transformed_residuals"
+"1",""
+"1","
+"
+"1","A = 55.48, p-value < 2.2e-16"
+"1","
+"
+"1","
+"
+"0","# Create a Q-Q plot for the Yeo-Johnson transformed residuals"
+"0","qq_plot_yeo_johnson_transformed <- ggplot(data.frame(Residuals = yeo_johnson_transformed_residuals), aes(sample = Residuals)) +"
+"0","  stat_qq() +"
+"0","  stat_qq_line() +"
+"0","  ggtitle(""Q-Q Plot of Yeo-Johnson Transformed Residuals"") +"
+"0","  xlab(""Theoretical Quantiles"") +"
+"0","  ylab(""Sample Quantiles"")"
+"0",""
+"0","print(qq_plot_yeo_johnson_transformed)"

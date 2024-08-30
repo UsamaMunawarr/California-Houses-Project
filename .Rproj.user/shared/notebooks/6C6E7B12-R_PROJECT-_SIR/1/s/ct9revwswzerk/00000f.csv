@@ -1,0 +1,2 @@
+"0","# library(GGally) # corr plot"
+"0","#ggscatmat(auto,columns =1:ncol(auto)) # do this if you have more comp power"

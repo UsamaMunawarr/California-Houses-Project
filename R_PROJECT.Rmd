@@ -1,0 +1,1325 @@
+---
+title: "Project"
+author: "Abu Usama"
+date: "2023-08-14"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+---
+
+# Step 1  
+## Data Collection  
+We’re using the California Housing Prices dataset (housing.csv) from the following Kaggle site: [Click Here](https://www.kaggle.com/camnugent/california-housing-prices). This data pertains to the houses found in a given California district and some summary stats about them based on the 1990 census data.  
+The dataset contains 20640
+ observations and 10 attributes. Below is a list of the variables with descriptions taken from the original Kaggle site given above.  
+
+>longitude: A measure of how far west a house is; a higher value is farther west  
+>latitude: A measure of how far north a house is; a higher value is farther north  
+>housing_median_age: Median age of a house within a block; a lower number is a newer building  
+>total_rooms: Total number of rooms within a block  
+>total_bedrooms: Total number of bedrooms within a block  
+>population: Total number of people residing within a block  
+>households: Total number of households, a group of people residing within a home unit, for a block  
+>median_income: Median income for households within a block of houses (measured in tens of thousands of US Dollars)  
+>ocean_proximity: Location of the house w.r.t ocean/sea  
+>median_house_value: Median house value for households within a block (measured in US Dollars)  
+
+```{r}
+# install.packages("readr")
+library(readr)
+housing <- read_csv("housing.csv")
+View(housing)
+data <- housing
+```
+
+# Step 2  
+## EDA:
+```{r}
+head(data)
+```
+>### To See Rows and columns in dataset
+
+```{r}
+Columns <- ncol(data)
+cat("No of columns in dataset:",Columns,"\n")
+Rows <- nrow(data)
+cat("No of Rows in dataset:",Rows,"\n")
+```
+
+
+
+>### To See column names in dataset
+
+```{r}
+# Print the column names, one per line
+cat("The Column Names in Dataset are Given Below:\n")
+cat(paste(colnames(data), collapse = "\n"), "\n")
+```
+>### To se Data Type of Columns Through `dplyr` package
+
+```{r}
+# install.packages("dplyr")
+library(dplyr)
+glimpse(data)
+```
+>### To see dtype of All variables `(Base Function)`
+
+```{r}
+# Display the data types of all columns using sapply
+sapply(data, class)
+# # Alternative
+# ## Display the structure of the data frame, including data types of all columns
+# str(data)
+```
+>### 2.1.1 Overview of Missing Values  
+
+```{r}
+null_counts <- colSums(is.na(data))
+print(null_counts)
+```
+>### See the Structure of dataset
+
+```{r}
+class(data)
+```
+>### summary statistics of dataset `(Base Funtion)`
+
+```{r}
+summary(data)
+```
+>### Summarize on the basis of catagorical column `(dplyr)`
+
+```{r}
+# summarize with dplyr packages
+data %>% 
+  group_by(ocean_proximity) %>%
+  summarise(mean(median_house_value), sd(median_house_value), min(median_house_value), max(median_house_value))
+```
+>### 3.1.1 To See Outliers In dataset base R
+
+```{r}
+# install.packages("tidyverse")
+library(tidyverse)
+
+# Define the function
+create_box_plots <- function(data) {
+  
+  # Convert data to long format excluding the 'Species' column
+  data_long <- data %>% 
+    select(-ocean_proximity) %>%
+    pivot_longer(cols = everything(), names_to = "variable", values_to = "value")
+  
+  # Function to create a box plot for a single variable
+  plot_single_variable <- function(variable,color) {
+    ggplot(data_long %>% filter(variable == !!variable), aes(x = variable, y = value , fill= variable)) +
+      geom_boxplot() +
+      labs(title = paste("Box Plot of", variable),
+           x = "Variable",
+           y = "Values") +
+      theme_minimal()
+  }
+  ##################################################################################################################
+  # Example of data_long %>% filter (variable == !!variable)
+                                      #Evaluate !!variable to "Sepal.Length".
+                                      #Filter data_long to keep only the rows where variable is "Sepal.Length".
+  #######################################################################################################################
+  
+  # Generate and print box plots for each continuous variable
+  variables <- unique(data_long$variable)
+  plots <- lapply(variables, plot_single_variable)
+  
+  return(plots)
+}
+  ###################################################################################################################
+ # Example of lapply and unique
+    #If data_long$variable contains "Sepal.Length", "Sepal.Width", "Petal.Length", and "Petal.Width"
+    #lapply(variables, plot_single_variable) = plot_single_variable("Sepal.Length"): Creates a box plot for "Sepal.Length".
+                                              #plot_single_variable("Sepal.Width"): Creates a box plot for "Sepal.Width".
+                                              #plot_single_variable("Petal.Length"): Creates a box plot for "Petal.Length".
+                                              #plot_single_variable("Petal.Width"): Creates a box plot for "Petal.Width"
+  ########################################################################################################################
+# Example usage with the iris dataset
+plots <- create_box_plots(data)
+
+# Display the plots one by one
+for (plot in plots) {
+  print(plot)
+}
+```
+
+```{r}
+colSums(is.na(data))
+```
+>### 2.1.2 Dealing with Missing Values Through Median Imputation(Step of Preprocess)  it is important to use this step here because some of the plots are sensitive  
+for Missing Values
+
+```{r}
+data$total_bedrooms[is.na(data$total_bedrooms)] <- median(data$total_bedrooms, na.rm = TRUE)
+null_counts <- colSums(is.na(data))
+print(null_counts)
+```
+
+
+
+
+### Convert the correlation matrix to a data frame
+```{r}
+# install.packages("corrplot")
+library(corrplot)
+numeric_df <- data %>%
+  select_if(is.numeric)
+m<-cor(numeric_df,method="pearson")
+m <- cor(numeric_df)
+m
+```
+
+```{r}
+corrplot(m,order="hclust",addrect=2)
+```
+
+```{r}
+# Specify a dark shade color
+dark_shade_color <- "darkgray"
+
+# Create the correlation plot with a dark shade
+corrplot(m, method = "shade", order = "alphabet", shade.col = dark_shade_color)
+
+```
+
+```{r}
+# install.packages("heatmaply")
+library(heatmaply)
+heatmaply(m,
+          scale_fill_gradient_fun = ggplot2::scale_fill_gradient2(low = "blue", mid = "white", high = "red"),
+          # plot_method = "plotly"
+          main = "Correlation Heatmap",
+          xlab = "Variables",
+          ylab = "Variables"
+)
+
+```
+
+```{r}
+# Load necessary library
+library(ggplot2)
+
+# Plot histograms for numeric variables
+ggplot(data, aes(x = median_income, fill = ..count..)) +
+  geom_histogram(binwidth = 1, color = "black") +
+  scale_fill_viridis_c() + 
+  labs(title = "Distribution of Median Income", x = "Median Income", y = "Frequency") +
+  theme_minimal()
+  #theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+```{r}
+library(ggplot2)
+
+# Define custom colors for ocean proximity categories
+custom_colors <- c("NEAR BAY" = "blue", "NEAR OCEAN" = "green", "<1H OCEAN" = "orange", "INLAND" = "red", "ISLAND" = "purple")
+
+# Create the box plot with custom colors
+ggplot(data, aes(x = ocean_proximity, y = median_house_value, fill = ocean_proximity)) +
+  geom_boxplot() +
+  labs(title = "House Value by Ocean Proximity", x = "Ocean Proximity", y = "Median House Value") +
+  scale_fill_manual(values = custom_colors)
+
+
+```
+
+```{r}
+# Bar plot for 'ocean_proximity_encoded'
+ggplot(data, aes(x = (ocean_proximity))) +
+  geom_bar(fill = "orange") +
+  labs(title = "Distribution of Ocean Proximity", x = "Ocean Proximity", y = "Count")
+```
+
+```{r}
+# Scatter plot with linear regression line
+ggplot(data, aes(x = median_income, y = median_house_value)) +
+  geom_point(alpha = 0.3, color = "darkgreen") +
+  geom_smooth(method = "lm", se = FALSE, color = "purple") +
+  labs(title = "Median Income vs. House Value with Linear Regression Line",
+       x = "Median Income", y = "Median House Value")
+```
+
+```{r}
+# Density plot for 'median_income'
+ggplot(data, aes(x = median_income, fill = ocean_proximity)) +
+  geom_density(alpha = 0.5) +
+  labs(title = "Density Plot of Median Income by Ocean Proximity")
+```
+
+```{r}
+# Violin plot for 'ocean_proximity' vs. 'median_house_value'
+ggplot(data, aes(x = as.factor(ocean_proximity), y = median_house_value)) +
+  geom_violin(fill = "pink") +
+  labs(title = "Violin Plot of House Value by Ocean Proximity")
+```
+
+```{r}
+# Create a facet grid of scatter plots
+ggplot(data, aes(x = median_income, y = median_house_value)) +
+  geom_point(alpha = 0.3, color = "darkgreen") +
+  facet_grid(. ~ ocean_proximity) +
+  labs(title = "Median Income vs. House Value by Ocean Proximity")
+```
+Report The problems which i see in EDA:
+There Are Many Problems in My dataset But the Main Problems Which i Deal   
+in Preprocessing of data are Given Blow  
+1:Dtype 
+2:Encode
+3:Missing Values
+Because My Main Purpose To Use Multiple Linear Regression Model Thats why  
+i will Deal With Outliers Through Residuals In my Assumption Section 
+
+# Step 3
+## Data Preprocess
+>### convert Fector to charactor
+
+```{r}
+# Check the current class of the ocean_proximity column
+class(data$ocean_proximity)
+
+# Convert ocean_proximity to a factor
+data$ocean_proximity <- as.factor(data$ocean_proximity)
+
+# Verify the conversion
+class(data$ocean_proximity)
+```
+
+>### 2.1.2 Dealing with Missing Values Through Median Imputation
+
+```{r}
+data$total_bedrooms[is.na(data$total_bedrooms)] <- median(data$total_bedrooms, na.rm = TRUE)
+null_counts <- colSums(is.na(data))
+print(null_counts)
+```
+```{r}
+colSums(is.na(data))
+```
+>### 2.1.3 Dealing with Missing Values Through Mode Imputation
+
+```{r}
+# Function to calculate the mode
+##calculate_mode <- function(x) {
+  ##unique_x <- unique(x)
+  ##unique_x[which.max(tabulate(match(x, unique_x)))]
+##}
+# Calculate the mode of the categorical column, ignoring NA values
+##mode_value <- calculate_mode(na.omit(data$category_column))
+# Replace NA values in the categorical column with the mode
+##data$category_column[is.na(data$category_column)] <- mode_value
+```
+
+>### 2.2.1 Encode Categorical Variables
+
+```{r}
+library(dplyr)
+unique_values <- unique(data$ocean_proximity)
+print(unique_values)
+```
+
+```{r}
+label_dict <- setNames(1:length(unique_values), unique_values)
+data_encoded <- data %>%
+mutate(ocean_proximity_encoded = label_dict[ocean_proximity])
+data1 <- data_encoded
+```
+
+```{r}
+unique_values <- unique(data1$ocean_proximity_encoded)
+print(unique_values)
+```
+
+>### 2.3.1 Mathmatical Transformation / Add New variables
+
+```{r}
+data1$room_par_houshold <- data1$total_rooms / data$households
+data1$bedroomd_per_room <- data1$total_bedrooms / data$total_rooms
+data1$population_per_houshold <- data1$population / data$households
+print(colnames(data1))
+```
+
+# Step 4
+## Feature Selection
+```{r}
+# Calculate correlations between variables and median_house_value
+#library(corrplot)
+numeric_df <- data %>%
+  select_if(is.numeric)
+correlations<-cor(numeric_df,method="pearson")
+
+```
+
+```{r}
+correlations
+```
+
+```{r}
+# Sort correlations in descending order
+sorted_correlations <- sort(correlations[,"median_house_value"], decreasing = TRUE)
+sorted_correlations
+```
+
+```{r}
+# Select features with high correlations
+threshold <- 0.2  # Adjust as needed
+selected_features <- names(sorted_correlations[sorted_correlations > threshold])
+selected_features
+```
+
+```{r}
+# Convert the correlation matrix to a data frame
+cor_data <- as.data.frame(as.table(correlations))
+cor_data
+```
+
+```{r}
+# Filter out correlations with the dependent variable
+cor_data_filtered <- cor_data %>%
+  filter(Var1 != "median_house_value")
+```
+
+```{r}
+# Visualize correlations using a bar plot
+library(ggplot2)
+ggplot(data = cor_data_filtered, aes(x = reorder(Var1, -Freq), y = Freq)) +
+  geom_bar(stat = "identity", fill = "blue", color = "black") +
+  coord_flip() +
+  labs(title = "Correlations with Median House Value")
+
+```
+# Step 5.	
+## Regression Modeling
+>### 5.1.1 Split Data into Traning Testing
+
+```{r}
+# set.seed(123)
+# train_index <- sample(seq_len(nrow(data)), size = 0.7*nrow(data))
+# train_data <- data[train_index, ]
+# test_data <- data[-train_index, ]
+```
+
+```{r}
+# dplyr approach to split data
+##data <- data %>% 
+  ##mutate(row_id = row_number())
+##set.seed(123)
+# Split
+##train_data <- data %>% 
+  ##sample_frac(0.7)
+##test_data <- data %>% 
+  ##anti_join(train_data,by=row_id)
+```
+
+```{r}
+# cat("Number of Rows Of Traning Data:",nrow(train_data),'\n')
+# cat("Number of Rows Of Testing Data:",nrow(test_data),'\n')
+# cat("Sum of Both:",sum(14447+6193),'\n')
+# cat('Total values of Original Data:',nrow(data),'\n')
+```
+>### 5.2.1 Create a function For Model Evaluation
+
+```{r}
+# evaluate_model <- function(actual, predicted) {
+#   mae <- mean(abs(actual - predicted))
+#   mse <- mean((actual - predicted)^2)
+#   rmse <- sqrt(mse)
+#   r2 <- 1 - sum((actual - predicted)^2) / sum((actual - mean(actual))^2)
+#   return(list(MAE = mae, MSE = mse, RMSE = rmse, R2 = r2))
+# }
+```
+>### 5.3.1 Fit the model
+
+```{r}
+# # Train the linear regression model by using step wise approach
+# linear_model <- lm(median_house_value ~ ., data = train_data)
+```
+>### 5.4.1 Predict the model on traing dataset
+
+```{r}
+# train_predictions <- predict(linear_model, train_data)
+```
+>### 5.5.1 Evaluate the model on training data
+
+```{r}
+# train_evaluation <- evaluate_model(train_data$median_house_value, train_predictions)
+# print("Training Data Evaluation:")
+# print(train_evaluation)
+```
+>### 5.6.1 Predict on test data
+
+```{r}
+# test_predictions <- predict(linear_model, test_data)
+```
+>### 5.6.1 Evaluate the model on test data
+
+```{r}
+# test_evaluation <- evaluate_model(test_data$median_house_value, test_predictions)
+# print("Test Data Evaluation:")
+# print(test_evaluation)
+```
+```{r}
+# Save the Loess model using serialization
+#saveRDS(linear_model, "linear_model.rds")
+```
+>### 5.6.1 Model Interpatation
+
+```{r}
+linear_model <- lm(median_house_value ~ data$longitude+data$latitude+data$median_income+ocean_proximity , data = data)
+summary(linear_model)
+```
+
+```{r}
+linear_model <- lm(median_house_value ~ ., data = data)
+summary(linear_model)
+```
+The **"Residual standard error"** represents the estimated standard deviation of the residuals. It indicates how much the predicted values vary around the actual values. In this case, the estimated residual standard error is 68390.  
+
+The **"Coefficients"** section provides the estimated coefficients of the regression model:  
+
+**(Intercept)**: The estimated intercept term, representing the predicted median house value when both "Indep Variables" and "housing_median_age" are zero. In this case, it is -2.436e+06. The associated t-value indicates the significance of the intercept, and the p-value (< 2e-16) suggests that the intercept is significantly different from zero.  
+
+**median_income**: The estimated coefficient for the "median_income" predictor variable is 43169.19. This indicates that for every unit increase in median income, the median house value is expected to increase by $43169.19. The very low p-value (< 0.001) indicates strong statistical significance.  
+  
+**housing_median_age**: The estimated coefficient for the "housing_median_age" predictor variable is 1744.13. This means that for every unit increase in housing median age, the median house value is expected to increase by $1744.13. The very low p-value (< 0.001) indicates strong statistical significance.  
+
+The multiple **R-squared** value (0.5091) represents the proportion of the variability in the dependent variable (median_house_value) that is explained by the predictor variables (median_income and housing_median_age). **Adjusted R-squared** adjusts for the number of predictors in the model.    
+
+The **F-statistic** assesses the overall significance of the model. A very low p-value (< 0.001) suggests that the model is statistically significant overall and can explain a significant amount of the variability in the dependent variable.  
+
+
+# Step 6.	
+## Testing The Assumptions
+### Linearity
+
+>### 6.1.1 (1st way to check linearity Graphically)
+
+```{R}
+# Create a data frame with observed and fitted values
+df <- data.frame(
+  Observed = data$median_house_value,
+  Fitted = fitted(linear_model)
+)
+
+# Load ggplot2 library
+library(ggplot2)
+
+# Plot Observed vs Fitted values
+ggplot(df, aes(x = Fitted, y = Observed)) +
+  geom_point(color = "blue", alpha = 0.7) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  labs(title = "Observed vs. Fitted Values (Linearity)", x = "Fitted Values", y = "Observed Values") +
+  theme_minimal()
+ 
+```
+>### 6.1.1 (2nd way to check linearity Graphically)
+
+```{R}
+# Scatter plot of residuals vs. fitted values
+library(ggplot2)
+ggplot(data.frame(Fitted = fitted(linear_model), Residuals = residuals(linear_model)), aes(x = Fitted, y = Residuals, color = Residuals)) +
+  geom_point(alpha = 0.6, size = 2) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_smooth(method = "loess", color = "darkgreen", linetype = "dotted", se = FALSE) +
+  scale_color_gradient2(low = "blue", mid = "white", high = "red", midpoint = 0) +
+  labs(
+    title = "Residuals vs. Fitted Values",
+    x = "Fitted Values",
+    y = "Residuals"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5, face = "bold"),
+    axis.title = element_text(face = "bold")
+  )
+
+
+```
+>### Ideal Linearity
+
+```{r}
+# # Load necessary libraries
+# library(ggplot2)
+# 
+# # Generate a sample dataset
+# set.seed(123)  # For reproducibility
+# n <- 100
+# x <- rnorm(n, mean = 0, sd = 1)
+# y <- 3 * x + rnorm(n, mean = 0, sd = 1)  # Linear relationship with some noise
+# 
+# # Fit a linear model
+# model <- lm(y ~ x)
+# 
+# # Create a data frame with observed and fitted values
+# data_1 <- data.frame(
+#   Observed = y,
+#   Fitted = fitted(model)
+# )
+# 
+# # Plot the observed values vs. fitted values
+# ggplot(data_1, aes(x = Fitted, y = Observed)) +
+#   geom_point(color = "blue", alpha = 0.7) +
+#   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+#   labs(title = "Observed vs. Fitted Values (Linearity)", x = "Fitted Values", y = "Observed Values") +
+#   theme_minimal()
+
+```
+>### Numerically way to check Linearity
+
+```{r}
+# Remsey's Test
+# install.packages("lmtest")
+# install.packages("zoo")
+library(lmtest)
+library(zoo)
+reset_test_power2 <- resettest(linear_model,power=2)
+print(reset_test_power2)
+```
+Think of Ramsey's RESET test as a way to check if your model is missing something important.  
+By adding squared values (or higher powers) of the predicted values and seeing if they help,  
+you can tell if there’s a more complex relationship that your simple linear model is not capturing.  
+
+
+**If the p-value is high (typically > 0.05):**    
+This means there is no evidence that adding squared terms significantly improves the model.  
+
+**If the p-value is low (typically < 0.05):**  
+This suggests that adding squared terms does significantly improve the model.  
+
+ab is ki pvalue 0.05 sa kam ha.  
+```{r}
+# Load necessary library
+# install.packages("car")
+library(car)
+
+# Component + residual plots
+#crPlots(linear_model)
+```
+
+### Normality
+>### 6.1.1 Normality Through Graphically way
+
+```{r}
+hist(linear_model$residuals, main = "Histogram of Residuals", xlab = "Residuals")
+```
+
+```{r}
+# Load the necessary libraries
+library(ggplot2)
+# install.packages("gridExtra")
+library(gridExtra)
+
+# Assuming your residuals are stored in a variable called residuals
+residuals <- linear_model$residuals
+
+# Create a data frame from the residuals
+df <- data.frame(Residuals = residuals)
+
+# Histogram with a bell curve
+hist_plot <- ggplot(df, aes(x = Residuals)) +
+  geom_histogram(aes(y = ..density..), bins = 30, fill = "grey", color = "black") +
+  stat_function(fun = dnorm, args = list(mean = mean(df$Residuals), sd = sd(df$Residuals)), 
+                color = "black", size = 1) +
+  ggtitle("Histogram of Residuals") +
+  xlab("Residuals") +
+  ylab("Density")
+
+# Q-Q plot
+qq_plot <- ggplot(df, aes(sample = Residuals)) +
+  stat_qq() +
+  stat_qq_line() +
+  ggtitle("Q-Q Plot of Residuals") +
+  xlab("Theoretical Quantiles") +
+  ylab("Sample Quantiles")
+
+# Combine plots
+grid.arrange(hist_plot, qq_plot, nrow = 1)
+
+```
+**QQ PLOT**
+*Indicators of Normality*  
+Points Lie Close to the Reference Line:  
+If your residuals are normally distributed, the points in the Q-Q plot will lie close to the 45-degree reference line.  
+Minor deviations from the line are acceptable and expected due to random sampling variability.  
+*Indicators of Non-Normality*  
+Systematic Deviations from the Reference Line:  
+Heavy Tails (Kurtosis): If the points at the ends (tails) of the plot diverge from the reference line (either above or below),   this indicates heavy tails. The distribution has more extreme values (kurtosis) than a normal distribution.  
+Skewness: If the points curve away from the reference line at one end but not the other, this indicates skewness.  
+Right Skew (Positive Skew): Points bend upwards on the right side.  
+Left Skew (Negative Skew): Points bend downwards on the left side.  
+S-Curve (Light Tails): If the points form an S-shape, it indicates light tails, meaning the distribution has fewer extreme   values than a normal distribution.  
+>### 6.1.1 Normality Through Testing
+
+```{r}
+ks.test(linear_model$residuals,"pnorm")
+```
+```{r}
+# Normality 
+# install.packages("nortest")
+library(nortest)
+ad_test <- ad.test(residuals)
+print(ad_test)
+```
+
+>### 6.2.1 Try To Handle Non Normal Data Through Creating New Model Log Transformation
+
+```{r}
+# Load necessary library
+##library(dplyr)
+
+# Assuming your data is stored in a variable called train_data
+##data_1 <- data %>%
+  ##mutate(
+    # Apply log transformation to selected variables
+    ##Log_Latitude = log(latitude + 1),
+    ##Log_HousingMedianAge = log(housing_median_age + 1),
+    ##Log_TotalRooms = log(total_rooms + 1),
+    ##Log_TotalBedrooms = log(total_bedrooms + 1),
+    ##Log_Population = log(population + 1),
+    ##Log_Households = log(households + 1),
+    ##Log_MedianIncome = log(median_income + 1),
+    # Assuming your dependent variable is named `house_value`
+  ##) %>%
+  ##select(
+    # Select both transformed and untransformed variables
+    ##longitude,  # Untransformed variable
+    ##Log_Latitude, Log_HousingMedianAge, Log_TotalRooms, 
+    ##Log_TotalBedrooms, Log_Population, Log_Households, Log_MedianIncome, 
+    ##median_house_value, ocean_proximity  # Ensure this matches the actual column name exactly
+  ##)
+
+##log_linear_model <- lm(median_house_value ~ longitude+Log_Latitude+Log_HousingMedianAge+
+                         ##Log_TotalRooms+Log_TotalBedrooms+Log_Population+Log_Households+
+                         ##Log_MedianIncome+ocean_proximity,data =data_1)
+
+##hist(log_linear_model$residuals, main = "Histogram of Residuals", xlab = "Residuals")
+
+# Load the necessary libraries
+##library(ggplot2)
+#install.packages("gridExtra")
+##library(gridExtra)
+
+# Assuming your residuals are stored in a variable called residuals
+##residuals <- log_linear_model$residuals
+
+# Create a data frame from the residuals
+##df <- data.frame(Residuals = residuals)
+
+# Histogram with a bell curve
+##hist_plot <- ggplot(df, aes(x = Residuals)) +
+  ##geom_histogram(aes(y = ..density..), bins = 30, fill = "grey", color = "black") +
+  ##stat_function(fun = dnorm, args = list(mean = mean(df$Residuals), sd = sd(df$Residuals)), 
+                ##color = "black", size = 1) +
+  ##ggtitle("Histogram of Residuals") +
+  ##xlab("Residuals") +
+  ##ylab("Density")
+
+# Q-Q plot
+##qq_plot <- ggplot(df, aes(sample = Residuals)) +
+  ##stat_qq() +
+  ##stat_qq_line() +
+  ##ggtitle("Q-Q Plot of Residuals") +
+  ##xlab("Theoretical Quantiles") +
+  ##ylab("Sample Quantiles")
+
+# Combine plots
+##grid.arrange(hist_plot, qq_plot, nrow = 1)
+
+##summary(log_linear_model)
+
+```
+
+### Outliers
+
+>### 6.2.2 checking and Removal of Outliers of log_Linear_Model
+
+```{r}
+# Calculate residuals for the training data
+#train_residuals <- residuals(linear_model) #(ya b thk)
+##train_residuals <- log_linear_model$residuals
+
+# Create a data frame with residuals and corresponding ocean_proximity
+##residuals_data <- data.frame(Residuals = train_residuals, Ocean_Proximity = train_data_1$ocean_proximity)
+##residuals_data
+
+# Create a boxplot of residuals before removing outliers
+##library(ggplot2)
+##ggplot(residuals_data, aes(y = Residuals, fill = Ocean_Proximity)) +
+  ##geom_boxplot() +
+  ##labs(title = "Boxplot of Residuals Before Removing Outliers", y = "Residuals", fill = "Ocean Proximity") +
+  ##theme_minimal()
+
+# Identify and remove outliers
+##q1 <- quantile(train_residuals, 0.25)
+##q3 <- quantile(train_residuals, 0.75)
+##iqr <- q3 - q1
+##lower_bound <- q1 - 1.5 * iqr
+##upper_bound <- q3 + 1.5 * iqr
+
+# Filter out the outliers in the training data
+##outliers_filtered <- train_data_1[!(train_residuals < lower_bound | train_residuals > upper_bound), ]
+
+##outliers_filtered_linear_model <- lm(median_house_value ~ longitude+Log_Latitude+Log_HousingMedianAge+
+                         ##Log_TotalRooms+Log_TotalBedrooms+Log_Population+Log_Households+
+                         ##Log_MedianIncome+ocean_proximity,data =outliers_filtered)
+##summary_model <- summary(outliers_filtered_linear_model)
+##adj_r2 <- summary_model$adj.r.squared
+##adj_r2
+
+# Calculate residuals using the filtered training data
+##train_residuals_filtered <- residuals(outliers_filtered_linear_model)
+
+# Create a data frame with residuals and corresponding predictor variable
+##residuals_data_filtered <- data.frame(Residuals = train_residuals_filtered, Ocean_Proximity = outliers_filtered$ocean_proximity)
+
+# Plot the boxplot of residuals after removing outliers
+##library(ggplot2)
+##ggplot(residuals_data_filtered, aes(y = Residuals, fill = Ocean_Proximity)) +
+  ##geom_boxplot() +
+  ##labs(title = "Boxplot of Residuals After Removing Outliers", y = "Residuals", fill = "Ocean Proximity") +
+  ##theme_minimal()
+```
+
+>### 6.2.2 Checking Outliers of linear Model
+
+```{r}
+residuals <- linear_model$residuals
+
+# Create a data frame with residuals and corresponding ocean_proximity
+residuals_data <- data.frame(Residuals = residuals, Ocean_Proximity = data$ocean_proximity)
+#residuals_data
+
+# Create a boxplot of residuals before removing outliers
+library(ggplot2)
+ggplot(residuals_data, aes(y = Residuals, fill = Ocean_Proximity)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Residuals Before Removing Outliers", y = "Residuals", fill = "Ocean Proximity") +
+  theme_minimal()
+```
+>### Removel Outliers of linear Model
+
+```{r}
+# Identify and remove outliers
+q1 <- quantile(residuals, 0.25)
+q3 <- quantile(residuals, 0.75)
+iqr <- q3 - q1
+lower_bound <- q1 - 1.5 * iqr
+upper_bound <- q3 + 1.5 * iqr
+
+# Filter out the outliers in the training data
+outliers_filtered <- data[!(residuals < lower_bound | residuals > upper_bound), ]
+```
+
+
+```{r}
+# Fit the linear model on the filtered training data
+outliers_filtered_linear_model <- lm(median_house_value ~ ., data = outliers_filtered)
+# extract Adj R2
+summary_model <- summary(outliers_filtered_linear_model)
+adj_r2 <- summary_model$adj.r.squared
+adj_r2
+```
+
+```{r}
+# Calculate residuals using the filtered training data
+residuals_filtered <- residuals(outliers_filtered_linear_model)
+```
+
+```{r}
+# Create a data frame with residuals and corresponding predictor variable
+residuals_data_filtered <- data.frame(Residuals = residuals_filtered, Ocean_Proximity = outliers_filtered$ocean_proximity)
+```
+
+```{r}
+# Plot the boxplot of residuals after removing outliers
+library(ggplot2)
+p<- ggplot(residuals_data_filtered, aes(y = Residuals, fill = Ocean_Proximity)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Residuals After Removing Outliers", y = "Residuals", fill = "Ocean Proximity") +
+  theme_minimal()
+library(plotly)
+ggplotly(p)
+```
+```{r}
+head(residuals_data_filtered)
+```
+>### Zscore test to remove outliers
+
+```{r}
+# # Load necessary libraries
+# # library(ggplot2)
+# 
+# # Fit the initial multiple linear regression model
+# linear_model <- lm(median_house_value ~ ., data = train_data)
+# 
+# # Calculate the residuals
+# train_residuals <- residuals(linear_model)
+# 
+# # Create a data frame with residuals and corresponding ocean_proximity
+# residuals_data <- data.frame(Residuals = train_residuals, Ocean_Proximity = train_data$ocean_proximity)
+# 
+# # Create a boxplot of residuals before removing outliers
+# ggplot(residuals_data, aes(y = Residuals, fill = Ocean_Proximity)) +
+#   geom_boxplot() +
+#   labs(title = "Boxplot of Residuals Before Removing Outliers", y = "Residuals", fill = "Ocean Proximity") +
+#   theme_minimal()
+# 
+# # ### Remove Outliers Using Z-Score Method
+# 
+# # Calculate Z-scores for the residuals
+# z_scores <- scale(train_residuals)
+# 
+# # Set the threshold for identifying outliers (e.g., Z-score > 3 or < -3)
+# threshold <- 3
+# 
+# # Identify outliers
+# outliers <- abs(z_scores) > threshold
+# 
+# # Filter out the outliers in the training data
+# outliers_filtered <- train_data[!outliers, ]
+# 
+# # Fit the linear model on the filtered training data
+# outliers_filtered_linear_model <- lm(median_house_value ~ ., data = outliers_filtered)
+# 
+# # Extract Adjusted R-squared
+# summary_model <- summary(outliers_filtered_linear_model)
+# adj_r2 <- summary_model$adj.r.squared
+# adj_r2
+# 
+# # Calculate residuals using the filtered training data
+# train_residuals_filtered <- residuals(outliers_filtered_linear_model)
+# 
+# # Create a data frame with residuals and corresponding predictor variable
+# residuals_data_filtered <- data.frame(Residuals = train_residuals_filtered, Ocean_Proximity = outliers_filtered$ocean_proximity)
+# 
+# # Plot the boxplot of residuals after removing outliers
+# p <- ggplot(residuals_data_filtered, aes(y = Residuals, fill = Ocean_Proximity)) +
+#   geom_boxplot() +
+#   labs(title = "Boxplot of Residuals After Removing Outliers", y = "Residuals", fill = "Ocean Proximity") +
+#   theme_minimal()
+# library(plotly)
+# ggplotly(p)
+
+
+
+# Check normality of the residuals using Anderson-Darling test
+#library(nortest)
+#ad_test <- ad.test(train_residuals_filtered)
+#print(ad_test)
+
+# Create Q-Q plot of the residuals after removing outliers
+#qq_plot <- ggplot(data.frame(Residuals = train_residuals_filtered), aes(sample = Residuals)) +
+  #stat_qq() +
+  #stat_qq_line() +
+  #ggtitle("Q-Q Plot of Residuals After Removing Outliers") +
+  #xlab("Theoretical Quantiles") +
+ # ylab("Sample Quantiles")
+
+#print(qq_plot)
+```
+>### 6.2.2 Remaning Outliers Removed Through Manually
+
+```{r}
+
+# residuals_data_filtered <- residuals_data_filtered %>%
+#   filter(!(Ocean_Proximity == "INLAND" & (Residuals < -104691.96 | Residuals > 102637.64))) %>%
+#   filter(!(Ocean_Proximity == "<1H OCEAN" & (Residuals < -147994.07 | Residuals > 139754.52)))
+# 
+# p<-ggplot(residuals_data_filtered, aes(y = Residuals, fill = Ocean_Proximity)) +
+#   geom_boxplot() +
+#   labs(title = "Boxplot of Residuals After Removing Outliers", y = "Residuals", fill = "Ocean Proximity") +
+#   theme_minimal()
+# ggplotly(p)
+
+```
+
+
+
+### Hetrocedasticity
+>### 6.3.1 Graphically 
+
+```{r}
+# Graphical Test: Residuals vs. Fitted plot
+plot(linear_model$fitted.values, linear_model$residuals, main = "Residuals vs. Fitted", xlab = "Fitted Values", ylab = "Residuals",col="orange")
+abline(h = 0, col = "black", lty = 2)
+```
+ 
+>### 6.3.1 Nummarically
+
+```{r}
+library(lmtest)
+bptest(linear_model)
+```
+Low p-value (typically < 0.05): Indicates strong evidence against the null hypothesis, suggesting that there is significant   heteroscedasticity present in the data. In other words, the variance of the errors is not constant across all levels of the   independent variables. 
+>### 6.3.3 Ideal Homocedasticity
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+
+# Generate a sample dataset with homoscedastic residuals
+set.seed(123)  # For reproducibility
+n <- 100
+x <- rnorm(n, mean = 0, sd = 1)
+y <- 3 * x + rnorm(n, mean = 0, sd = 1)  # Linear relationship with constant variance
+
+# Fit a linear model
+model <- lm(y ~ x)
+# Create a data frame with fitted values and residuals
+data_2 <- data.frame(
+  Fitted = fitted(model),
+  Residuals = residuals(model)
+)
+
+# Plot the residuals vs. fitted values
+ggplot(data_2, aes(x = Fitted, y = Residuals)) +
+  geom_point() +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
+  geom_smooth(method = "lm", se = FALSE, color = "green", linetype = "dotted") +
+  labs(title = "Residuals vs. Fitted Values (Homoscedasticity)", x = "Fitted Values", y = "Residuals") +
+  theme_minimal()
+```
+>### 6.1.1 Deal with Hetrocedasity with Weighted Least Squares (WLS)
+
+```{r}
+# # Fit the linear regression model using ordinary least squares (OLS)
+# linear_model_ols <- lm(median_house_value ~ ., data = train_data)
+# 
+# # Calculate the residuals from the OLS model
+# residuals_ols <- residuals(linear_model_ols)
+# 
+# # Calculate the absolute residuals
+# absolute_residuals <- abs(residuals_ols)
+# 
+# # Calculate weights based on the absolute residuals
+# weights <- 1 / absolute_residuals
+# 
+# # Fit the weighted least squares (WLS) model using the weights
+# linear_model_wls <- lm(median_house_value ~ ., data = data, weights = weights)
+# 
+# # Check the summary of the WLS model
+# summary(linear_model_wls)
+# 
+# # Graphical Test: Residuals vs. Fitted plot
+# plot(linear_model_wls$fitted.values, linear_model_wls$residuals, main = "Residuals vs. Fitted", xlab = "Fitted Values", ylab = "Residuals",col="orange")
+# abline(h = 0, col = "black", lty = 2)
+
+```
+
+```{r}
+# library(lmtest)
+# bptest(linear_model_wls)
+```
+### Autocorrelation
+>### 6.4.1 Graphically 
+
+```{r}
+# Graphical Test: Time series plot of residuals
+plot(linear_model$residuals, type = "l", main = "Time Series Plot of Residuals",
+     col="green")
+abline(h = 0, col = "blue", lty = 2)
+```
+>### 6.4.2 Nummarically
+
+```{r}
+library(zoo)
+dwtest(linear_model)
+```
+In your specific case, the p-value associated with the Durbin-Watson test is 0.2412,  
+which is greater than the typical significance level of 0.05. This suggests that there  
+is not enough evidence to conclude that there is significant autocorrelation present in  
+the data. Therefore, you would typically fail to reject the null hypothesis and conclude  
+that the residuals are independent, at least with respect to positive autocorrelation.
+### Multicollinearity  
+>### 6.5.1 Graphically 
+
+```{r}
+# library(GGally) # corr plot
+#ggscatmat(auto,columns =1:ncol(auto)) # do this if you have more comp power
+```
+>### 6.5.2 Nummarically
+
+```{r}
+# install.packages("mctest")
+library(mctest) # for multicollinearity test
+mctest(linear_model, type="i")
+```
+
+```{r}
+# Create component plus residual (CR) plots
+library(car)
+vif(linear_model)
+```
+### Try to FullFill The Assumptions By Using Transformation
+>### Try To Handle Non Normal data Through Residuals Log Transformation
+
+```{r}
+# Assuming your residuals are stored in a variable called residuals
+residuals <- linear_model$residuals
+
+# Apply log transformation to the residuals
+log_transformed_residuals <- log(residuals + 1)  # Adding 1 to handle zero or negative values
+
+# Check normality of the log transformed residuals using Anderson-Darling test
+ad_test_log_transformed <- ad.test(log_transformed_residuals)
+print(ad_test_log_transformed)
+
+# Create a Q-Q plot for the log transformed residuals
+qq_plot_log_transformed <- ggplot(data.frame(Residuals = log_transformed_residuals), aes(sample = Residuals)) +
+  stat_qq() +
+  stat_qq_line() +
+  ggtitle("Q-Q Plot of Log Transformed Residuals") +
+  xlab("Theoretical Quantiles") +
+  ylab("Sample Quantiles")
+
+print(qq_plot_log_transformed)
+```
+>### Yeo-Johnson Transformation ya acha kam karti ha bakio sa
+
+```{r}
+linear_model <- lm(median_house_value ~ ., data = data)
+# Apply Yeo-Johnson transformation to the residuals
+# install.packages("bestNormalize")
+library(bestNormalize)
+yeo_johnson_result <- yeojohnson(residuals)
+yeo_johnson_transformed_residuals <- yeo_johnson_result$x.t
+
+# Check normality of the Yeo-Johnson transformed residuals using Anderson-Darling test
+ad_test_yeo_johnson_transformed <- ad.test(yeo_johnson_transformed_residuals)
+print(ad_test_yeo_johnson_transformed)
+
+# Create a Q-Q plot for the Yeo-Johnson transformed residuals
+qq_plot_yeo_johnson_transformed <- ggplot(data.frame(Residuals = yeo_johnson_transformed_residuals), aes(sample = Residuals)) +
+  stat_qq() +
+  stat_qq_line() +
+  ggtitle("Q-Q Plot of Yeo-Johnson Transformed Residuals") +
+  xlab("Theoretical Quantiles") +
+  ylab("Sample Quantiles")
+
+print(qq_plot_yeo_johnson_transformed)
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r}
+saveRDS(linear_model, "linear_model.rds")
+```
+# Non Linear Model (Random Forest)
+```{r}
+# library(randomForest)
+# random_forest_model <- randomForest(median_house_value ~ ., data = train_data, ntree = 500)
+# 
+# # Predict on test data
+# random_forest_predictions <- predict(random_forest_model, test_data)
+# 
+# # Evaluate
+# random_forest_evaluation <- evaluate_model(test_data$median_house_value, random_forest_predictions)
+# print(random_forest_evaluation)
+
+```
+
+```{r}
+# # Retrieve variable names for categorical variables
+# cat_var_names <- random_forest_model$forest$ncat
+# 
+# # Retrieve variable names for continuous variables
+# cont_var_names <- names(random_forest_model$forest$xlevels)
+# 
+# # Combine variable names
+# all_var_names <- c(cat_var_names, cont_var_names)
+# 
+# # Print variable names
+# print(all_var_names)
+
+```
+
+```{r}
+# Save the Loess model using serialization
+#saveRDS(random_forest_model, "random_forest_model.rds")
+
+```
+
+# Non Linear (Polynomial Regression with all indep variables)
+```{r}
+# Load necessary libraries
+# install.packages("caret")
+library(caret)
+library(dplyr)
+
+# Load the dataset (assuming train_data and test_data are already available)
+# If not, load the dataset here
+# train_data <- read.csv("train_data.csv")
+# test_data <- read.csv("test_data.csv")
+
+# Ensure all predictors are numeric
+numeric_predictors <- select_if(data, is.numeric)
+
+
+# Create polynomial features for a specified degree (e.g., degree = 2)
+degree <- 2
+poly_features <- as.data.frame(poly(as.matrix(numeric_predictors), degree = degree, raw = TRUE))
+
+# Generate valid column names
+colnames(poly_features) <- make.names(colnames(poly_features))
+
+# Combine polynomial features with the target variable
+data_poly <- cbind(poly_features, median_house_value = data$median_house_value)
+
+# Fit the polynomial regression model
+formula <- as.formula(paste("median_house_value ~", paste(colnames(poly_features), collapse = " + ")))
+poly_model <- lm(formula, data = data_poly)
+summary(poly_model)
+```
+
+# Non Linear Model (Polynomial Regression with specific indep variables)
+```{r}
+# Load necessary libraries
+library(caret)
+library(dplyr)
+
+# Load the dataset (assuming train_data and test_data are already available)
+# If not, load the dataset here
+# train_data <- read.csv("train_data.csv")
+# test_data <- read.csv("test_data.csv")
+
+# Ensure all predictors are numeric
+numeric_predictors <- select_if(data, is.numeric)
+
+data2 <- data
+# Assume 'median_house_value' is the target variable and we want to fit polynomial regression for 'median_income' as an example
+
+# Create polynomial features manually
+data2$median_income_squared <- data2$median_income^2
+
+
+# Fit the polynomial regression model manually
+poly_model <- lm(median_house_value ~ median_income + median_income_squared, data=data2)
+
+# Predict on test data
+poly_predictions <- predict(poly_model, data=data2)
+
+# Define the evaluate_model function to compute evaluation metrics
+evaluate_model <- function(actual, predicted) {
+  mse <- mean((actual - predicted)^2)
+  rmse <- sqrt(mse)
+  mae <- mean(abs(actual - predicted))
+  r2 <- 1 - sum((actual - predicted)^2) / sum((actual - mean(actual))^2)
+  return(list(MSE = mse, RMSE = rmse, MAE = mae, R2 = r2))
+}
+
+# Evaluate the model
+poly_evaluation <- evaluate_model(data2$median_house_value, poly_predictions)
+print(poly_evaluation) #could not we used all variables instead of median_income
+```
+
+```{r}
+# library(ggplot2)
+# 
+# # Fit Loess model
+# loess_model <- loess(median_house_value ~ ., data = train_data)
+# 
+# # Predict on test data
+# loess_predictions <- predict(loess_model, newdata = test_data)
+# 
+# # Evaluate
+# loess_evaluation <- evaluate_model(test_data$median_house_value, loess_predictions)
+# print("Loess Evaluation:")
+# print(loess_evaluation)
+# 
+# # Plotting
+# ggplot(test_data, aes(x = median_income, y = median_house_value)) +
+#   geom_point(alpha = 0.3, color = "blue") +
+#   geom_line(aes(y = loess_predictions), color = "red") +
+#   labs(title = "Loess Regression",
+#        x = "Median Income", y = "Median House Value")
+```
+
+```{r}
+# Save the Loess model using serialization
+#saveRDS(loess_model, "loess_model.rds")
+# Load the Loess model in the Shiny app
+#loess_model <- readRDS("loess_model.rds")
+
+```
+# Non Linear Model (Random Forest)
+
+```{r}
+# library(writexl)
+# Assuming your dataset is in a variable called `housing`
+#write_csv(train_data, "train_data.csv")
+
+```
+
+```{r}
+evaluate_model <- function(actual, predicted) {
+  mae <- mean(abs(actual - predicted))
+  mse <- mean((actual - predicted)^2)
+  rmse <- sqrt(mse)
+  r2 <- 1 - sum((actual - predicted)^2) / sum((actual - mean(actual))^2)
+  return(list(MAE = mae, MSE = mse, RMSE = rmse, R2 = r2))
+}
+
+```
+
+```{r}
+# Train Random Forest model
+#install.packages("randomForest")
+library(randomForest)
+random_forest_model <- randomForest(median_house_value ~ ., data = data, ntree = 500)
+```
+
+```{r}
+random_forest_predictions <- predict(random_forest_model, data)
+random_forest_evaluation <- evaluate_model(data$median_house_value, random_forest_predictions)
+print(random_forest_evaluation)
+```
+
+```{r}
+saveRDS(random_forest_model, "random_forest_model.rds")
+```
+
+```{r}
+data
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
